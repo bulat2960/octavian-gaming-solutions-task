@@ -7,8 +7,8 @@ export default {
     type: Phaser.WEBGL,
     background: '#000000',
     parent: 'gameWrapper',
-    width: 1280,
-    height: 720,
+    width: 1200,
+    height: 600,
     render: {
         powerPreference: 'high-performance',
         mipmapFilter: 'LINEAR_MIPMAP_LINEAR',
