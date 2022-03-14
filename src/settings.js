@@ -1,3 +1,3 @@
 export default {
-    symbolHeight: 150,
+    symbolHeight: 125,
 }
