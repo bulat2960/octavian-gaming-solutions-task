@@ -22,6 +22,8 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.load.image('play', 'interface/play.png')
         this.load.image('stop', 'interface/stop.png')
+
+        this.load.image('background', 'interface/background.png')
     }
 
     create() {
