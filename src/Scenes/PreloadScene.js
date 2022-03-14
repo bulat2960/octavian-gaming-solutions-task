@@ -2,7 +2,7 @@ import Config from '../config'
 
 export default class PreloadScene extends Phaser.Scene {
     constructor() {
-        super('Preload');
+        super('Preload')
     }
 
     preload() {
@@ -23,10 +23,11 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('play', 'interface/play.png')
         this.load.image('stop', 'interface/stop.png')
 
-        this.load.image('background', 'interface/background.png')
+        this.load.image('machine', 'interface/machine.png')
+        this.load.image('background', 'interface/background.jpg')
     }
 
     create() {
-        this.scene.start('Game');
+        this.scene.start('Game')
     }
 }

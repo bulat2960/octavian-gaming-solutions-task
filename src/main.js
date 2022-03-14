@@ -3,10 +3,11 @@ import Config from './config'
 
 export default class Game {
     constructor() {
-        new Phaser.Game(Config);
+        let game = new Phaser.Game(Config)
+        game.scale.autoCenter = true
     }
 }
 
 window.onload = () => {
-    const game = new Game();
+    const game = new Game()
 }
