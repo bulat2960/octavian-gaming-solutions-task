@@ -1,8 +1,6 @@
 import PreloadScene from './Scenes/PreloadScene'
 import GameScene from './Scenes/GameScene'
 
-const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-
 export default {
     type: Phaser.WEBGL,
     background: '#000000',
@@ -20,14 +18,7 @@ export default {
         }
     },
     scale: {
-        mode: Phaser.Scale.NONE,
+        mode: Phaser.Scale.CENTER_BOTH,
     },
     scene: [PreloadScene, GameScene],
-    fps : {
-        min: 30,
-        target: 60
-    },
-    audio: {
-        context: audioContext,
-    },
 }
