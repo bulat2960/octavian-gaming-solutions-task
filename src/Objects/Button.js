@@ -17,4 +17,14 @@ export default class Button extends Phaser.GameObjects.Sprite {
             callback()
         }, this)
     }
+
+    setEnabled(enabled) {
+        if (enabled) {
+            this.setTexture(this.texture.key.replace('-grayscale', ''))
+            this.setInteractive()
+        } else {
+            this.setTexture(this.texture.key + '-grayscale')
+            this.disableInteractive()
+        }
+    }
 }

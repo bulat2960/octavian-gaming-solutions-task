@@ -7,7 +7,7 @@ export default class Container extends Phaser.GameObjects.Container {
         scene.add.existing(this)
 
         for (let i = 0; i < Settings.columnsCount; i++) {
-            const image = scene.add.sprite(0, -Settings.imageHeight * i, 'image_' + this.getRandomImageNumber())
+            const image = scene.add.sprite(0, Settings.imageHeight * i, 'image_' + this.getRandomImageNumber())
             this.add(image)
         }
 
@@ -17,9 +17,13 @@ export default class Container extends Phaser.GameObjects.Container {
             Decelerating: 2,
         }
 
-        this.state = this.stateEnum.Stopped
+        this.resetContainer()
+    }
 
-        this.currentDuration = Settings.initialAnimationDuration
+    resetContainer() {
+        this.state = this.stateEnum.Stopped
+        this.initialDuration = 200 + Phaser.Math.Between(-100, 100)
+        this.currentDuration = this.initialDuration
     }
 
     startAnimation() {
@@ -50,33 +54,27 @@ export default class Container extends Phaser.GameObjects.Container {
         this.animation.updateTo('y', this.y + Settings.imageHeight, true)
 
         // Изменение позиции первого элемента на позицию последнго
-        // Здесь this.first - это нижний элемент в столбце барабана (соответственно this.last - верхний)
-        // То есть 
-        this.first.y = this.last.y - Settings.imageHeight
-        this.moveTo(this.first, this.length - 1)
+        this.last.y = this.first.y - Settings.imageHeight
+        this.moveTo(this.last, 0)
 
         // Генерация новой рандомной текстуры для элемента, изменившего позицию
-        const randomNumber = this.getRandomImageNumber()
-        this.first.setTexture('image_blur_' + randomNumber)
+        this.first.setTexture('image_blur_' + this.getRandomImageNumber())
 
-        if (this.state == this.stateEnum.Accelerating) {
+        if (this.state == this.stateEnum.Accelerating) {    
             if (this.currentDuration > Settings.minAnimationDuration) {
-                this.currentDuration -= 5
+                this.currentDuration -= Settings.animationChangeStep
             }
         } else if (this.state == this.stateEnum.Decelerating) {
-            if (this.currentDuration < Settings.initialAnimationDuration) {
-                this.currentDuration += 5
+            if (this.currentDuration < this.initialDuration) {
+                this.currentDuration += Settings.animationChangeStep
             } else {
-                this.state = this.stateEnum.Stopped
-                this.currentDuration = Settings.initialAnimationDuration
+                this.resetContainer()
             }
         } else if (this.state == this.stateEnum.Stopped) {
             this.animation.remove() 
+            this.list.forEach(object => object.setTexture('image_' + this.getImageNumberFromImageName(object.texture.key)))
 
-            for (let object of this.list) {
-                let imageNumber = this.getImageNumberFromImageName(object.texture.key)
-                object.setTexture('image_' + imageNumber)
-            }
+            this.scene.calculateStoppedContainers()
 
             return
         }
