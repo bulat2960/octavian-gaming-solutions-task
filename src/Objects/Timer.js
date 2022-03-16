@@ -1,4 +1,5 @@
-import Settings from "../settings"
+import Settings from '../settings'
+import ProgressBar from './ProgressBar'
 
 export default class Timer {
     constructor(scene, x, y, initialTime) {
@@ -7,13 +8,15 @@ export default class Timer {
         this.initialTime = initialTime
         this.timeLeft = initialTime
 
+        this.progressBar = new ProgressBar(this.scene, x, y, initialTime)
+
         let textConfig = {
             x,
             y,
-            text: this.formatTime(initialTime),
+            text: initialTime,
             style: Settings.textStyle,
+            origin: (0.5, 0.5)
         }
-
         this.text = this.scene.make.text(textConfig)
     }
 
@@ -24,29 +27,23 @@ export default class Timer {
             callback: this.updateTime.bind(this),
             loop: true,
         })
+        this.progressBar.start()
     }
 
     stop() {
         this.resetTime()
         this.timer.remove()
-    }
-
-    formatTime(seconds) {
-        let minutes = Math.floor(seconds / 60)
-        let secondsRemainder = seconds % 60
-        secondsRemainder = secondsRemainder.toString().padStart(2, '0')
-
-        return `${minutes}:${secondsRemainder}`;
+        this.progressBar.stop()
     }
 
     resetTime() {
         this.timeLeft = this.initialTime
-        this.text.setText(this.formatTime(this.timeLeft))
+        this.text.setText(this.timeLeft)
     }
 
     updateTime() {
         this.timeLeft -= 1
-        this.text.setText(this.formatTime(this.timeLeft))
+        this.text.setText(this.timeLeft)
 
         if (this.timeLeft < 0) {
             this.scene.stopMachine()

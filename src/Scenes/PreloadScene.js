@@ -22,6 +22,11 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('machine', 'interface/machine.png')
         this.load.image('background', 'interface/background.jpg')
 
+        this.load.plugin(
+            'rexcircularprogressplugin', 
+            'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexcircularprogressplugin.min.js', 
+            true
+        );  
     }
 
     create() {

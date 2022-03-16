@@ -3,6 +3,8 @@ import Container from '../Objects/Container'
 import Button from '../Objects/Button'
 import Timer from '../Objects/Timer'
 import Settings from '../settings'
+import ProgressBar from '../Objects/ProgressBar'
+
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -16,13 +18,11 @@ export default class GameScene extends Phaser.Scene {
 
         const controlsWidthMultiplier = 0.9
 
-        this.startButton = new Button(this, Config.width * controlsWidthMultiplier, Config.height * 0.2, 'play')
-        this.startButton.setEnabled(true)
-        this.startButton.setCallback(this.runMachine.bind(this))
+        this.startButton = new Button(this, Config.width * controlsWidthMultiplier, Config.height * 0.2, 'play',
+                                      true, this.runMachine.bind(this))
 
-        this.stopButton = new Button(this, Config.width * controlsWidthMultiplier, Config.height * 0.8, 'stop')
-        this.stopButton.setEnabled(false)
-        this.stopButton.setCallback(this.stopMachine.bind(this))
+        this.stopButton = new Button(this, Config.width * controlsWidthMultiplier, Config.height * 0.8, 'stop',
+                                     false, this.stopMachine.bind(this))
 
         this.timer = new Timer(this, Config.width * controlsWidthMultiplier, Config.height * 0.5, Settings.timerSeconds)
 
