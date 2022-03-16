@@ -3,7 +3,8 @@ export default {
     imagesCount: 10,
 
     columnsCount: 5,
-    initialAnimationDuration: 150,
+    initialAnimationDuration: 200,
+    animationChangeStep: 10, 
     minAnimationDuration: 50,
 
     controlButtonsDefaultScale: 0.5,

@@ -1,6 +1,6 @@
 import Config from '../config'
 import Container from '../Objects/Container'
-import Sprite from '../Objects/Sprite'
+import Button from '../Objects/Button'
 import Timer from '../Objects/Timer'
 import Settings from '../settings'
 
@@ -9,7 +9,6 @@ export default class GameScene extends Phaser.Scene {
         super('Game')
 
         this.containers = []
-        this.isRunning = false
     }
 
     create() {
@@ -17,11 +16,11 @@ export default class GameScene extends Phaser.Scene {
 
         const controlsWidthMultiplier = 0.9
 
-        this.startButton = new Sprite(this, Config.width * controlsWidthMultiplier, Config.height * 0.2, 'play')
-        this.startButton.setScale(Settings.controlButtonsDefaultScale)
+        this.startButton = new Button(this, Config.width * controlsWidthMultiplier, Config.height * 0.2, 'play')
+        this.startButton.setCallback(this.runMachine.bind(this))
 
-        this.stopButton = new Sprite(this, Config.width * controlsWidthMultiplier, Config.height * 0.8, 'stop-grayscale')
-        this.stopButton.setScale(Settings.controlButtonsDefaultScale)
+        this.stopButton = new Button(this, Config.width * controlsWidthMultiplier, Config.height * 0.8, 'stop-grayscale')
+        this.stopButton.setCallback(this.stopMachine.bind(this))
 
         this.timer = new Timer(this, Config.width * controlsWidthMultiplier, Config.height * 0.5, Settings.timerSeconds)
 
@@ -41,46 +40,32 @@ export default class GameScene extends Phaser.Scene {
 
         this.add.sprite(Config.width / 2, Config.height / 2, 'machine')
 
-        this.setupControlButton(this.startButton, this.runMachine)
-        this.setupControlButton(this.stopButton, this.stopMachine)
+        this.resetMachine()
     }
 
-    runMachine() {
-        if (this.isRunning) {
-            return
-        }
-
-        this.isRunning = true
-
-
+    runMachine() { 
         this.containers.forEach(container => container.startAnimation());
         this.timer.start()
 
         this.startButton.setTexture('play-grayscale')
-        this.stopButton.setTexture('stop')
+        this.startButton.disableInteractive()
 
-        this.startButton.setScale(Settings.controlButtonsClickedScale)
+        this.stopButton.setTexture('stop')
+        this.stopButton.setInteractive()
     }
 
     stopMachine() {
-        if (!this.isRunning) {
-            return
-        }
-
-        this.isRunning = false
-
         this.containers.forEach(container => container.stopAnimation());
         this.timer.stop()
 
-        this.startButton.setTexture('play')
-        this.stopButton.setTexture('stop-grayscale')
-
-        this.stopButton.setScale(Settings.controlButtonsClickedScale)
+        this.resetMachine()
     }
 
-    setupControlButton(buttonObject, callback) {
-        buttonObject.on('pointerdown', callback, this)
-                    .on('pointerup', () => {buttonObject.setScale(Settings.controlButtonsDefaultScale)}, this)
-                    .on('pointerout', () => {buttonObject.setScale(Settings.controlButtonsDefaultScale)}, this)
+    resetMachine() {
+        this.startButton.setTexture('play')
+        this.startButton.setInteractive()
+
+        this.stopButton.setTexture('stop-grayscale')
+        this.stopButton.disableInteractive()
     }
 }
