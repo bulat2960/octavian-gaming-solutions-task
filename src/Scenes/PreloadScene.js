@@ -1,5 +1,8 @@
 import Settings from '../settings'
 
+/* 
+    Сцена загрузки ресурсов
+*/
 export default class PreloadScene extends Phaser.Scene {
     constructor() {
         super('Preload')
@@ -22,11 +25,11 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('machine', 'interface/machine.png')
         this.load.image('background', 'interface/background.jpg')
 
-        this.load.plugin(
-            'rexcircularprogressplugin', 
-            'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexcircularprogressplugin.min.js', 
-            true
-        );  
+        this.load.audio('button', 'audio/button.mp3')
+        this.load.audio('reel', 'audio/reel.mp3')
+        this.load.audio('mall', 'audio/mall.ogg')
+        this.load.audio('reel_stop', 'audio/reel_stop.mp3')
+        this.load.audio('countdown', 'audio/countdown.wav')
     }
 
     create() {

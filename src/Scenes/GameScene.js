@@ -1,16 +1,18 @@
 import Config from '../config'
-import Container from '../Objects/Container'
+import Reel from '../Objects/Reel'
 import Button from '../Objects/Button'
 import Timer from '../Objects/Timer'
 import Settings from '../settings'
-import ProgressBar from '../Objects/ProgressBar'
+import Audio from '../Objects/Audio'
 
-
+/*
+    Главная сцена игры 
+*/
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super('Game')
 
-        this.containers = []
+        this.reels = []
     }
 
     create() {
@@ -18,50 +20,61 @@ export default class GameScene extends Phaser.Scene {
 
         const controlsWidthMultiplier = 0.9
 
+        // Управляющие кнопки
         this.startButton = new Button(this, Config.width * controlsWidthMultiplier, Config.height * 0.2, 'play',
                                       true, this.runMachine.bind(this))
 
         this.stopButton = new Button(this, Config.width * controlsWidthMultiplier, Config.height * 0.8, 'stop',
                                      false, this.stopMachine.bind(this))
 
-        this.timer = new Timer(this, Config.width * controlsWidthMultiplier, Config.height * 0.5, Settings.timerSeconds)
+        // Таймер обратного отсчета 
+        this.timer = new Timer(this, Config.width * controlsWidthMultiplier, Config.height * 0.5, Settings.countdownTimer.seconds)
 
-        const containerWidth = 148
+        const reelWidth = 148
         const widthOffset = 300
         const heightOffset = 50
 
-        for (let i = 0; i < Settings.columnsCount; i++) {
-            let container = new Container(this, widthOffset + containerWidth * i, heightOffset)
-            this.containers.push(container)
+        // Барабаны 
+        for (let i = 0; i < Settings.reelsCount; i++) {
+            let reel = new Reel(this, widthOffset + reelWidth * i, heightOffset)
+            this.reels.push(reel)
         }
 
+        // Картинка слот-машины поверх барабанов 
         this.add.sprite(Config.width / 2, Config.height / 2, 'machine')
+
+        // Аудиоконтроллер
+        this.audioObject = new Audio(this)
+        this.audioObject.background.play()
     }
 
+    // Запуск анимации барабанов, таймера и музыки 
     runMachine() { 
-        this.containers.forEach(container => container.startAnimation());
+        this.reels.forEach(reel => reel.startAnimation())
         this.timer.start()
+        this.audioObject.reel.play()
 
         this.startButton.setEnabled(false)
         this.stopButton.setEnabled(true)
     }
 
+    // Остановка анимации барабанов, сброс таймера 
     stopMachine() {
-        this.containers.forEach(container => container.stopAnimation());
+        this.reels.forEach(reel => reel.stopAnimation())
         this.timer.stop()
 
         this.stopButton.setEnabled(false)
     }
 
-    calculateStoppedContainers() {
-        let stoppedCount = 0
+    calculateStoppedReels() {
+        // Подсчет остановленных барабанов
+        let stoppedCount = Array.from(this.reels, reel => reel.state == reel.stateEnum.Stopped)
+                                .reduce((total, value) => total + Number(value))
 
-        for (let container of this.containers) {
-            stoppedCount += (container.state == container.stateEnum.Stopped) ? 1 : 0
-        }
-
-        if (stoppedCount == this.containers.length) {
+        // Активировать кнопку 'старт', если слот-машина полностью остановлена
+        if (stoppedCount == this.reels.length) {
             this.startButton.setEnabled(true)
+            this.audioObject.reel.stop()
         }
     }
 }

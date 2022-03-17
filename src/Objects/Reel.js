@@ -1,12 +1,16 @@
 import Settings from '../settings'
 
-export default class Container extends Phaser.GameObjects.Container {
+/* 
+    Барабан слот-машины
+*/
+export default class Reel extends Phaser.GameObjects.Container {
     constructor(scene, x, y) {
         super(scene, x, y)
+
         this.scene = scene
         scene.add.existing(this)
 
-        for (let i = 0; i < Settings.columnsCount; i++) {
+        for (let i = 0; i < Settings.reelsCount; i++) {
             const image = scene.add.sprite(0, Settings.imageHeight * i, 'image_' + this.getRandomImageNumber())
             this.add(image)
         }
@@ -17,10 +21,10 @@ export default class Container extends Phaser.GameObjects.Container {
             Decelerating: 2,
         }
 
-        this.resetContainer()
+        this.reset()
     }
 
-    resetContainer() {
+    reset() {
         this.state = this.stateEnum.Stopped
         this.initialDuration = 200 + Phaser.Math.Between(-100, 100)
         this.currentDuration = this.initialDuration
@@ -53,7 +57,7 @@ export default class Container extends Phaser.GameObjects.Container {
         // Обновление начального и конечного значения для будущего шага анимации 
         this.animation.updateTo('y', this.y + Settings.imageHeight, true)
 
-        // Изменение позиции первого элемента на позицию последнго
+        // Изменение позиции последнего элемента на позицию первого
         this.last.y = this.first.y - Settings.imageHeight
         this.moveTo(this.last, 0)
 
@@ -61,21 +65,29 @@ export default class Container extends Phaser.GameObjects.Container {
         this.first.setTexture('image_blur_' + this.getRandomImageNumber())
 
         if (this.state == this.stateEnum.Accelerating) {    
-            if (this.currentDuration > Settings.minAnimationDuration) {
-                this.currentDuration -= Settings.animationChangeStep
+            if (this.currentDuration > Settings.animation.minDuration) {
+                // Постепенное уменьшение длительности анимации
+                this.currentDuration -= Settings.animation.changeStep
             }
         } else if (this.state == this.stateEnum.Decelerating) {
             if (this.currentDuration < this.initialDuration) {
-                this.currentDuration += Settings.animationChangeStep
+                // Постепенное увеличение длительности анимации
+                this.currentDuration += Settings.animation.changeStep
             } else {
-                this.resetContainer()
+                // Остановка барабана и сброс настроек к стартовым
+                this.reset()
             }
         } else if (this.state == this.stateEnum.Stopped) {
-            this.animation.remove() 
+            // Возврат текстур из размытых к нормальным
             this.list.forEach(object => object.setTexture('image_' + this.getImageNumberFromImageName(object.texture.key)))
 
-            this.scene.calculateStoppedContainers()
+            this.animation.remove()
+            this.scene.audioObject.reelStop.play()
 
+            // Вычисление количества остановленных барабанов
+            this.scene.calculateStoppedReels()
+
+            // Новый шаг анимации не будет запущен 
             return
         }
 
@@ -86,6 +98,7 @@ export default class Container extends Phaser.GameObjects.Container {
         return Phaser.Math.Between(1, Settings.imagesCount)
     }
 
+    // Картинки элементов барабана должны быть представлены в формате image_{number}
     getImageNumberFromImageName(imageName) {
         let splittedName = imageName.split('_')
         return splittedName[splittedName.length - 1]

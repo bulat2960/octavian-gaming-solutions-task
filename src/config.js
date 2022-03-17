@@ -1,5 +1,8 @@
 import PreloadScene from './Scenes/PreloadScene'
 import GameScene from './Scenes/GameScene'
+import CircularProgressPlugin from 'phaser3-rex-plugins/plugins/circularprogress-plugin'
+
+const audioContext = new (window.AudioContext || window.webkitAudioContext)()
 
 export default {
     type: Phaser.WEBGL,
@@ -11,14 +14,21 @@ export default {
         powerPreference: 'high-performance',
         mipmapFilter: 'LINEAR_MIPMAP_LINEAR',
     },
-    physics : {
-        default : 'arcade',
-        arcade : {
-            debug : false
-        }
-    },
     scale: {
         mode: Phaser.Scale.CENTER_BOTH,
     },
     scene: [PreloadScene, GameScene],
+
+    plugins: {
+        global: [{
+            key: 'rexCircularProgressPlugin',
+            plugin: CircularProgressPlugin,
+            start: true
+        },
+        ]
+    },
+
+    audio: {
+        context: audioContext,
+    },
 }

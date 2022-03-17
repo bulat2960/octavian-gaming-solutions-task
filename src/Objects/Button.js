@@ -1,21 +1,27 @@
 import Settings from '../settings'
 
+/*
+    Управляюшая кнопка слот-машины
+*/
 export default class Button extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, texture, enabled, callback) {
         super(scene, x, y, texture)
+
         scene.add.existing(this)
 
         this.setEnabled(enabled)
-        this.setScale(Settings.controlButtonsDefaultScale)
+        this.setScale(Settings.controlButtonScale.default)
 
-        this.on('pointerdown', () => {this.setScale(Settings.controlButtonsClickedScale)}, this)
-            .on('pointerout', () => {this.setScale(Settings.controlButtonsDefaultScale)}, this)
+        this.on('pointerdown', () => {this.setScale(Settings.controlButtonScale.clicked)}, this)
+            .on('pointerout', () => {this.setScale(Settings.controlButtonScale.default)}, this)
             .on('pointerup', () => {
-                this.setScale(Settings.controlButtonsDefaultScale)
-                callback()
+                this.setScale(Settings.controlButtonScale.default)
+                this.scene.audioObject.button.play()
+                callback() // При отпускании кнопки мыши сработает callback-функция 
             }, this)
     }
 
+    // Изменение текстуры и статуса интерактивности кнопки
     setEnabled(enabled) {
         if (enabled) {
             this.setTexture(this.texture.key.replace('-grayscale', ''))

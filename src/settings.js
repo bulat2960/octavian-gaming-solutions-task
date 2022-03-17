@@ -2,20 +2,33 @@ export default {
     imageHeight: 125,
     imagesCount: 10,
 
-    columnsCount: 5,
+    reelsCount: 5,
     
-    animationChangeStep: 10, 
-    minAnimationDuration: 50,
+    animation: {
+        changeStep: 10,
+        minDuration: 50,
+    },
 
-    controlButtonsDefaultScale: 0.5,
-    controlButtonsClickedScale: 0.4,
+    controlButtonScale: {
+        default: 0.5,
+        clicked: 0.4,
+    },
 
-    timerSeconds: 15,
+    countdownTimer: {
+        trackColor: 0x260e04,
+        barColor: 0xffffff,
+        centerColor: 0x4e342e,
 
-    textStyle: {
-        fontSize: '28px',
-        fontFamily: 'Arial',
-        color: '#ffffff',
-        align: 'center',
+        radius: 50,
+
+        seconds: 5,
+
+        textStyle: {
+            fontSize: '28px',
+            fontFamily: 'Arial',
+            color: '#ffffff',
+            align: 'center',
+        },
     }
+
 }
