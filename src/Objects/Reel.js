@@ -64,31 +64,37 @@ export default class Reel extends Phaser.GameObjects.Container {
         // Генерация новой рандомной текстуры для элемента, изменившего позицию
         this.first.setTexture('image_blur_' + this.getRandomImageNumber())
 
-        if (this.state == this.stateEnum.Accelerating) {    
-            if (this.currentDuration > Settings.animation.minDuration) {
-                // Постепенное уменьшение длительности анимации
-                this.currentDuration -= Settings.animation.changeStep
-            }
-        } else if (this.state == this.stateEnum.Decelerating) {
-            if (this.currentDuration < this.initialDuration) {
-                // Постепенное увеличение длительности анимации
-                this.currentDuration += Settings.animation.changeStep
-            } else {
-                // Остановка барабана и сброс настроек к стартовым
-                this.reset()
-            }
-        } else if (this.state == this.stateEnum.Stopped) {
-            // Возврат текстур из размытых к нормальным
-            this.list.forEach(object => object.setTexture('image_' + this.getImageNumberFromImageName(object.texture.key)))
+        const {changeStep, minDuration} = Settings.animation
 
-            this.animation.remove()
-            this.scene.audioObject.reelStop.play()
+        switch (this.state) {
+            case this.stateEnum.Accelerating:
+                if (this.currentDuration > minDuration) {
+                    // Постепенное уменьшение длительности анимации
+                    this.currentDuration -= changeStep
+                }
+                break
+            case this.stateEnum.Decelerating:
+                if (this.currentDuration < this.initialDuration) {
+                    // Постепенное увеличение длительности анимации
+                    this.currentDuration += changeStep
+                } else {
+                    // Остановка барабана и сброс настроек к стартовым
+                    this.reset()
+                }
+                break
+            case this.stateEnum.Stopped:
+            default:
+                // Возврат текстур из размытых к нормальным
+                this.list.forEach(object => object.setTexture('image_' + this.getImageNumberFromImageName(object.texture.key)))
 
-            // Вычисление количества остановленных барабанов
-            this.scene.calculateStoppedReels()
+                this.animation.remove()
+                this.scene.audioObject.reelStop.play()
 
-            // Новый шаг анимации не будет запущен 
-            return
+                // Вычисление количества остановленных барабанов
+                this.scene.calculateStoppedReels()
+
+                // Новый шаг анимации не будет запущен 
+                return
         }
 
         this.runAnimationStep()
