@@ -11,10 +11,10 @@ export default class PreloadScene extends Phaser.Scene {
     preload() {
         this.load.setPath('../../assets')
 
-        for (let i = 1; i <= Settings.imagesCount; i++) {
-            this.load.image('image_' + i, 'images/image_' + i + '.png')
-            this.load.image('image_blur_' + i, 'images_blur/image_blur_' + i + '.png')
-        }
+        Array.from(Array(Settings.imagesCount).keys()).forEach(i => {
+            this.load.image(`image_${i + 1}`, `images/image_${i + 1}.png`)
+            this.load.image(`image_blur_${i + 1}`, `images_blur/image_blur_${i + 1}.png`)
+        })
 
         this.load.image('play', 'interface/play.png')
         this.load.image('stop', 'interface/stop.png')

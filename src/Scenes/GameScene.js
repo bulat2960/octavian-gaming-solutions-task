@@ -34,9 +34,9 @@ export default class GameScene extends Phaser.Scene {
         const reelHeightOffset = 50
 
         // Барабаны 
-        for (let i = 0; i < Settings.reelsCount; i++) {
+        Array.from(Array(Settings.reelsCount).keys()).forEach(i => {
             this.reels.push(new Reel(this, reelWidthOffset + reelWidth * i, reelHeightOffset))
-        }
+        })
 
         // Картинка слот-машины поверх барабанов 
         this.add.sprite(Config.width / 2, Config.height / 2, 'machine')
