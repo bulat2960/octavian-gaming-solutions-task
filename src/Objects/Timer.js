@@ -8,8 +8,7 @@ export default class Timer {
     constructor(scene, x, y) {
         this.scene = scene
 
-        this.initialTime = Settings.countdownTimer.seconds
-        this.timeLeft = this.initialTime
+        this.seconds = Settings.countdownTimer.seconds
 
         // Прогресс-бар таймера
         this.progressBar = new ProgressBar(this.scene, x, y)
@@ -18,7 +17,7 @@ export default class Timer {
         this.text = this.scene.make.text({
             x,
             y,
-            text: this.initialTime,
+            text: this.seconds,
             style: Settings.countdownTimer.textStyle,
             origin: (0.5, 0.5)
         })
@@ -43,16 +42,16 @@ export default class Timer {
     }
 
     reset() {
-        this.timeLeft = this.initialTime
-        this.text.setText(this.timeLeft)
+        this.seconds = Settings.countdownTimer.seconds
+        this.text.setText(this.seconds)
     }
 
     update() {
-        this.timeLeft -= 1
-        this.text.setText(this.timeLeft)
+        this.seconds -= 1
+        this.text.setText(this.seconds)
 
         // Остановка слот-машины по истечении времени 
-        if (this.timeLeft < 0) {
+        if (this.seconds < 0) {
             this.scene.stopMachine()
         }
     }
