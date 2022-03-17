@@ -18,26 +18,24 @@ export default class GameScene extends Phaser.Scene {
     create() {
         this.add.sprite(Config.width / 2, Config.height / 2, 'background')
 
+        // Управляющие кнопки будут отодвинуты на 10% от правой границы экрана 
         const controlsWidthMultiplier = 0.9
+        const controlsWidth = Config.width * controlsWidthMultiplier
 
         // Управляющие кнопки
-        this.startButton = new Button(this, Config.width * controlsWidthMultiplier, Config.height * 0.2, 'play',
-                                      true, this.runMachine.bind(this))
-
-        this.stopButton = new Button(this, Config.width * controlsWidthMultiplier, Config.height * 0.8, 'stop',
-                                     false, this.stopMachine.bind(this))
+        this.startButton = new Button(this, controlsWidth, Config.height * 0.2, 'play', true, this.runMachine.bind(this))
+        this.stopButton = new Button(this, controlsWidth, Config.height * 0.8, 'stop', false, this.stopMachine.bind(this))
 
         // Таймер обратного отсчета 
-        this.timer = new Timer(this, Config.width * controlsWidthMultiplier, Config.height * 0.5, Settings.countdownTimer.seconds)
+        this.timer = new Timer(this, controlsWidth, Config.height * 0.5, Settings.countdownTimer.seconds)
 
         const reelWidth = 148
-        const widthOffset = 300
-        const heightOffset = 50
+        const reelWidthOffset = 300
+        const reelHeightOffset = 50
 
         // Барабаны 
         for (let i = 0; i < Settings.reelsCount; i++) {
-            let reel = new Reel(this, widthOffset + reelWidth * i, heightOffset)
-            this.reels.push(reel)
+            this.reels.push(new Reel(this, reelWidthOffset + reelWidth * i, reelHeightOffset))
         }
 
         // Картинка слот-машины поверх барабанов 
@@ -58,11 +56,13 @@ export default class GameScene extends Phaser.Scene {
         this.stopButton.setEnabled(true)
     }
 
-    // Остановка анимации барабанов, сброс таймера 
+    // Начало остановки анимации барабанов, сброс таймера 
     stopMachine() {
         this.reels.forEach(reel => reel.stopAnimation())
         this.timer.stop()
 
+        // Деактивируем кнопку stop, но не активируем start, барабаны всё еще вращаются 
+        // Кнопка start будет активирована после остановки всех барабанов
         this.stopButton.setEnabled(false)
     }
 
@@ -71,7 +71,7 @@ export default class GameScene extends Phaser.Scene {
         let stoppedCount = Array.from(this.reels, reel => reel.state == reel.stateEnum.Stopped)
                                 .reduce((total, value) => total + Number(value))
 
-        // Активировать кнопку 'старт', если слот-машина полностью остановлена
+        // Активировать кнопку start, если все барабаны остановлены 
         if (stoppedCount == this.reels.length) {
             this.startButton.setEnabled(true)
             this.audioObject.reel.stop()
