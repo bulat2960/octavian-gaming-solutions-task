@@ -9,13 +9,15 @@ export default class Button extends Phaser.GameObjects.Sprite {
 
         scene.add.existing(this)
 
-        this.setEnabled(enabled)
-        this.setScale(Settings.controlButtonScale.default)
+        const {initial, clicked} = Settings.controlButtonScale
 
-        this.on('pointerdown', () => {this.setScale(Settings.controlButtonScale.clicked)}, this)
-            .on('pointerout', () => {this.setScale(Settings.controlButtonScale.default)}, this)
+        this.setEnabled(enabled)
+        this.setScale(initial)
+
+        this.on('pointerdown', () => {this.setScale(clicked)}, this)
+            .on('pointerout', () => {this.setScale(initial)}, this)
             .on('pointerup', () => {
-                this.setScale(Settings.controlButtonScale.default)
+                this.setScale(initial)
                 this.scene.audioObject.button.play()
                 callback() // При отпускании кнопки мыши сработает callback-функция 
             }, this)

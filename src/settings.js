@@ -10,7 +10,7 @@ export default {
     },
 
     controlButtonScale: {
-        default: 0.5,
+        initial: 0.5,
         clicked: 0.4,
     },
 
