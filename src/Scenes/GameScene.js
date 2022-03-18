@@ -44,6 +44,8 @@ export default class GameScene extends Phaser.Scene {
         // Аудиоконтроллер
         this.audioObject = new Audio(this)
         this.audioObject.background.play()
+
+        this.stoppedCount = 0
     }
 
     // Запуск анимации барабанов, таймера и музыки 
@@ -67,14 +69,13 @@ export default class GameScene extends Phaser.Scene {
     }
 
     calculateStoppedReels() {
-        // Подсчет остановленных барабанов
-        let stoppedCount = Array.from(this.reels, reel => reel.state == reel.stateEnum.Stopped)
-                                .reduce((total, value) => total + Number(value))
+        this.stoppedCount++
 
         // Активировать кнопку start, если все барабаны остановлены 
-        if (stoppedCount == this.reels.length) {
+        if (this.stoppedCount == this.reels.length) {
             this.startButton.setEnabled(true)
             this.audioObject.reel.stop()
+            this.stoppedCount = 0
         }
     }
 }
