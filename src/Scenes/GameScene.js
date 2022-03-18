@@ -1,9 +1,9 @@
 import Config from '../config'
-import Reel from '../Objects/Reel'
 import Button from '../Objects/Button'
 import Timer from '../Objects/Timer'
 import Settings from '../settings'
 import Audio from '../Objects/Audio'
+import SlotMachine from '../Objects/SlotMachine'
 
 /*
     Главная сцена игры 
@@ -22,6 +22,8 @@ export default class GameScene extends Phaser.Scene {
         const controlsWidthMultiplier = 0.9
         const controlsWidth = Config.width * controlsWidthMultiplier
 
+        this.machine = new SlotMachine(this)
+
         // Управляющие кнопки
         this.startButton = new Button(this, controlsWidth, Config.height * 0.2, 'play', true, this.runMachine.bind(this))
         this.stopButton = new Button(this, controlsWidth, Config.height * 0.8, 'stop', false, this.stopMachine.bind(this))
@@ -29,28 +31,17 @@ export default class GameScene extends Phaser.Scene {
         // Таймер обратного отсчета 
         this.timer = new Timer(this, controlsWidth, Config.height * 0.5, Settings.countdownTimer.seconds)
 
-        const reelWidth = 148
-        const reelWidthOffset = 300
-        const reelHeightOffset = 50
-
-        // Барабаны 
-        Array.from(Array(Settings.reelsCount).keys()).forEach(i => {
-            this.reels.push(new Reel(this, reelWidthOffset + reelWidth * i, reelHeightOffset))
-        })
-
         // Картинка слот-машины поверх барабанов 
         this.add.sprite(Config.width / 2, Config.height / 2, 'machine')
 
         // Аудиоконтроллер
         this.audioObject = new Audio(this)
         this.audioObject.background.play()
-
-        this.stoppedCount = 0
     }
 
     // Запуск анимации барабанов, таймера и музыки 
     runMachine() { 
-        this.reels.forEach(reel => reel.startAnimation())
+        this.machine.run()
         this.timer.start()
         this.audioObject.reel.play()
 
@@ -60,22 +51,11 @@ export default class GameScene extends Phaser.Scene {
 
     // Начало остановки анимации барабанов, сброс таймера 
     stopMachine() {
-        this.reels.forEach(reel => reel.stopAnimation())
+        this.machine.stop()
         this.timer.stop()
 
         // Деактивируем кнопку stop, но не активируем start, барабаны всё еще вращаются 
         // Кнопка start будет активирована после остановки всех барабанов
         this.stopButton.setEnabled(false)
-    }
-
-    calculateStoppedReels() {
-        this.stoppedCount++
-
-        // Активировать кнопку start, если все барабаны остановлены 
-        if (this.stoppedCount == this.reels.length) {
-            this.startButton.setEnabled(true)
-            this.audioObject.reel.stop()
-            this.stoppedCount = 0
-        }
     }
 }

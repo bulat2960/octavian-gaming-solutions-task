@@ -4,8 +4,10 @@ import Settings from '../settings'
     Барабан слот-машины
 */
 export default class Reel extends Phaser.GameObjects.Container {
-    constructor(scene, x, y) {
+    constructor(scene, machine, x, y) {
         super(scene, x, y)
+
+        this.machine = machine
 
         this.scene = scene
         scene.add.existing(this)
@@ -30,13 +32,8 @@ export default class Reel extends Phaser.GameObjects.Container {
         this.currentDuration = this.initialDuration
     }
 
-    startAnimation() {
-        this.state = this.stateEnum.Accelerating
-        this.runAnimationStep()
-    }
-
-    stopAnimation() {
-        this.state = this.stateEnum.Decelerating
+    setAnimationState(state) {
+        this.state = state
     }
 
     runAnimationStep() {
@@ -91,7 +88,7 @@ export default class Reel extends Phaser.GameObjects.Container {
                 this.scene.audioObject.reelStop.play()
 
                 // Вычисление количества остановленных барабанов
-                this.scene.calculateStoppedReels()
+                this.machine.onReelStop()
 
                 // Новый шаг анимации не будет запущен 
                 return
