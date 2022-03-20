@@ -21,7 +21,7 @@ export default {
 
         radius: 50,
 
-        seconds: 15,
+        seconds: 10,
 
         textStyle: {
             fontSize: '28px',
