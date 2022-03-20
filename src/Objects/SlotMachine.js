@@ -35,7 +35,7 @@ export default class SlotMachine {
         this.stoppedReelsCount++
 
         if (this.stoppedReelsCount == this.reels.length) {
-            this.scene.startButton.setEnabled(true)
+            this.scene.onAllReelsStop()
             this.scene.audioObject.reel.stop()
             this.stoppedReelsCount = 0
         }

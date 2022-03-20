@@ -58,4 +58,11 @@ export default class GameScene extends Phaser.Scene {
         // Кнопка start будет активирована после остановки всех барабанов
         this.stopButton.setEnabled(false)
     }
+
+    onAllReelsStop() {
+        this.startButton.setEnabled(true)
+
+        // Здесь возможна дополнительная логика в полной версии игры,
+        // например вычислений выигрышных комбинаций, звуки etc.
+    }
 }
