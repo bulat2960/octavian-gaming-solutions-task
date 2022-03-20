@@ -19,6 +19,6 @@ export default class Audio {
         this.countdown = this.scene.sound.add('countdown')
 
         // Фон
-        this.background = this.scene.sound.add('mall', {loop: true, volume: 0.5})
+        this.background = this.scene.sound.add('background', {loop: true, volume: 0.5})
     }
 }

@@ -27,7 +27,7 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.load.audio('button', 'audio/button.mp3')
         this.load.audio('reel', 'audio/reel.mp3')
-        this.load.audio('mall', 'audio/mall.ogg')
+        this.load.audio('background', 'audio/background.ogg')
         this.load.audio('reel_stop', 'audio/reel_stop.mp3')
         this.load.audio('countdown', 'audio/countdown.wav')
     }
